@@ -1,0 +1,8 @@
+<%= simple_form_for(@template) do |f| %>
+    <%= f.input :name %>
+    <%= f.input :to %>
+    <%= f.input :cc %>
+    <%= f.input :subject %>
+    <%= f.input :body, :as => :ckeditor, :input_html => { :ckeditor => {:toolbar => 'mini'} } %>
+    <%= f.button :submit %>
+<% end %>
