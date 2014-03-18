@@ -3,12 +3,15 @@ require 'rooler/liquid_filters'
 require 'liquid'
 require 'ckeditor'
 require 'simple_form'
-require 'redcloth'
 
 module Rooler
   
   def self.process_scheduled_rules
     Rule.ready_to_be_checked.each(&:process)
+  end
+  
+  def self.clear_non_applicable_deliveries
+    Rule.all.each(&:clear_non_applicable_deliveries)
   end
   
   def self.deliver_pending_emails

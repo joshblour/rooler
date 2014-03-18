@@ -11,10 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140226120455) do
+ActiveRecord::Schema.define(version: 20140318113047) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "foos", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "active"
+  end
 
   create_table "rooler_deliveries", force: true do |t|
     t.string   "deliverable_type"
@@ -35,6 +41,7 @@ ActiveRecord::Schema.define(version: 20140226120455) do
     t.string   "instance_checker_method"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "method_params"
   end
 
   create_table "rooler_templates", force: true do |t|

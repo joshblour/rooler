@@ -3,13 +3,26 @@ require 'test_helper'
 class RoolerTest < ActiveSupport::TestCase
   
   test "processes scheduled rules" do
-    rule = create(:rule, check_frequency: 1.minute)
-    
+    foo = Foo.create
+    rule = create(:rule, klass_name: 'Foo', klass_finder_method: 'active_record_finder',  check_frequency: 1.minute)
+        
     assert_difference 'Rooler::Delivery.count' do
       Rooler.process_scheduled_rules
     end
     
-    assert_equal rule, Rooler::Delivery.last.deliverable
+    assert_equal foo, Rooler::Delivery.last.deliverable
+  end
+  
+  test 'resets resetable deliveries' do
+    foo = Foo.create(active: true)
+    rule = create(:rule, klass_name: 'Foo', klass_finder_method: 'active_finder')
+    rule.process    
+    foo.update_attributes(active: false)
+    
+    assert_difference 'Rooler::Delivery.count', -1 do
+      Rooler.clear_non_applicable_deliveries
+    end
+    
   end
   
   

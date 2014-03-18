@@ -9,53 +9,67 @@ module Rooler
     
     belongs_to :template
     has_many :deliveries
-    scope :ready_to_be_checked, -> {where("check_frequency IS NOT NULL AND (last_checked_at IS NULL OR (last_checked_at + check_frequency*'1 second'::interval) < now())")}    
+    scope :ready_to_be_checked, -> {where("last_checked_at IS NULL OR check_frequency IS NULL OR (last_checked_at + check_frequency*'1 second'::interval) < now()")}    
+    serialize :method_params
     
-    # processes this rule. If an object is provided, check that specific object using the instance method, otherwise check entire
-    # class using class method. For each positive result add object to delivery queue.
-    def process(object=nil)
-      results = []
-      
-      if object
-        results << object if check_instance(object)
-      else
-        results += [find_by_klass].flatten #return an array, even if the klass_finder_method returns a single object
-      end
-      
-      results.each {|result| add_delivery_to_queue(result)}
+    # processes this rule. Check entire class using class method. For each positive result add object to delivery queue.
+    def process
+      self.send(:find_undelivered_by_klass).each {|result| add_delivery_to_queue(result)}
+      self.update_column(:last_checked_at, Time.now)
+    end
+
+    def clear_non_applicable_deliveries
+      self.deliveries.where(deliverable_id: no_longer_applicable_delivery_ids).destroy_all
     end
     
     private 
     
-    # sends klass_method to klass. By default will exclude results that already have an entry in the deliveries table FOR THIS RULE
-    def find_by_klass(include_delivered = false)
-      already_delivered_ids = deliveries.where(deliverable_type: klass.name).pluck(:deliverable_id) unless include_delivered
-      
-      if already_delivered_ids && already_delivered_ids.any?
-        relation = klass.where('id not in (?)', already_delivered_ids)
+    # sends klass_method to klass. If the saved rule contains any params, send those as well.
+    def find_by_klass
+      if self.method_params
+        klass.send(self.klass_finder_method, self.method_params)
       else
-        # where(true) is to make sure we start with an active record relation object, and not the class
-        relation = klass.where(true)
+        klass.send(self.klass_finder_method)
       end
-      
-      return relation.send(self.klass_finder_method)
     end
     
-    # def find_resetable
-    #   #find objecs where reset conditions are matched and delete delivery record
-    # end
+    def find_by_klass_ids
+      results = find_by_klass
+      if results.respond_to?(:id)
+        results.pluck(:id)
+      elsif results.respond_to?(:map)
+        results.map(&:id)
+      else
+        raise "Cannot determine object ids"
+      end
+    end
+    
+    # Try to exclude any objects already delivered. If the result of the klass method is an active record relation, try to chain on a where clause.
+    # otherwise iterate through as an array and use reject.
+    def find_undelivered_by_klass
+      results = find_by_klass
+      if results.respond_to?(:where)
+        results.where.not(id: already_delivered_ids)
+      elsif results.respond_to?(:reject)
+        results.reject {|o| already_delivered_ids.include?(o.id)}
+      else
+        raise "cannot determine which objects where already delivered"
+      end
+    end
+    
+    def already_delivered_ids
+      self.deliveries.pluck(:deliverable_id)  #just getting the deliverable id lets the finder class and the result class be different
+    end
+    
+    def no_longer_applicable_delivery_ids
+      already_delivered_ids - find_by_klass_ids
+    end
         
     # create record in deliveries table for found objects (unless one already exists)
     def add_delivery_to_queue(object)
-      deliveries.create!(deliverable: object)
+      deliveries.create(deliverable: object)
     end
-  
-    def check_instance(object)
-      raise TypeError unless object.class.name == self.klass_name
-      return false if self.deliveries.where(deliverable: object).any?
-      return object.send(self.instance_checker_method)
-    end
-    
+
     def klass
       @klass ||= self.klass_name.try(:constantize)
       raise RuntimeError, "Couldn't constantize class name" unless @klass

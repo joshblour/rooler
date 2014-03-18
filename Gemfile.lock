@@ -2,16 +2,14 @@ PATH
   remote: .
   specs:
     rooler (0.0.1)
-      RedCloth (~> 4.2.9)
       ckeditor (~> 4.0.10)
       liquid (~> 2.6.1)
-      rails (~> 4.0.3)
+      rails (~> 4.0.1)
       simple_form
 
 GEM
   remote: https://rubygems.org/
   specs:
-    RedCloth (4.2.9)
     actionmailer (4.0.3)
       actionpack (= 4.0.3)
       mail (~> 2.5.4)

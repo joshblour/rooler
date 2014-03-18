@@ -7,40 +7,50 @@ module Rooler
   class RuleTest < ActiveSupport::TestCase
     
     test 'scope ready_to_be_checked returns rules where last_checked_at is < than check_frequency.ago or nil' do
-      create(:rule)
-      assert_equal [], Rule.ready_to_be_checked 
+      rule1 = create(:rule, check_frequency: 10.minutes, last_checked_at: 9.minutes.ago)
+      rule2 = create(:rule, check_frequency: 10.minutes, last_checked_at: 11.minutes.ago)
+      rule3 = create(:rule, check_frequency: 10.minutes, last_checked_at: nil)
+      rule4 = create(:rule, check_frequency: nil, last_checked_at: nil)
       
-      rule1 = create(:rule, check_frequency: 10.minutes, last_checked_at: 11.minutes.ago)
-      rule2 = create(:rule, check_frequency: 10.minutes, last_checked_at: nil)
-      
-      assert_equal [rule1, rule2], Rule.ready_to_be_checked      
+      assert_equal [rule2, rule3, rule4], Rule.ready_to_be_checked      
     end
 
     
-    test 'check_all method finds unprocessed objects of rules class using klass_method' do
-      rule = create(:rule, klass_name: 'Rooler::Rule', klass_finder_method: 'to_a')
-      assert_equal [rule], rule.send(:find_by_klass)
+    test 'check_all method finds objects of rules class using klass_method' do
+      foo = Foo.create
+      rule = create(:rule, klass_name: 'Foo', klass_finder_method: 'active_record_finder')
+      assert_equal [foo], rule.send(:find_by_klass)
       
-      last_rule = create(:rule, klass_name: 'Rooler::Rule', klass_finder_method: 'last')
-      assert_equal last_rule, last_rule.send(:find_by_klass)
+      empty_rule = create(:rule, klass_name: 'Foo', klass_finder_method: 'empty_finder')
+      assert_equal [], empty_rule.send(:find_by_klass)      
+    end
+    
+    test 'find_by_klass method finds objects of rules class using klass_method with params.' do
+      foo1 = Foo.create
+      foo2 = Foo.create
+      rule1 = create(:rule, klass_name: 'Foo', klass_finder_method: 'take', method_params: 1)
+      assert_equal [foo1], rule1.send(:find_by_klass)      
+    end
+    
+    test 'find_undelivered_by_klass finds unprocessed objects using klass_method. works with both AR relations and arrays' do
+      foo1 = Foo.create
+      rule1 = create(:rule, klass_name: 'Foo', klass_finder_method: 'active_record_finder')
+      rule2 = create(:rule, klass_name: 'Foo', klass_finder_method: 'array_finder')
+      rule1.process
+      rule2.process
       
-      rule.process(last_rule)
-      assert_equal [rule], rule.send(:find_by_klass)
+      foo2 = Foo.create
+      
+      assert_equal [foo2], rule1.reload.send(:find_undelivered_by_klass)      
+      assert_equal [foo2], rule2.reload.send(:find_undelivered_by_klass)      
+      
     end
     
     
-    test 'check() method runs the instance method against the provided object. returns error if they are not the same class' do
-      rule = create(:rule, klass_name: 'Rooler::Rule', instance_checker_method: 'nil?')
-      assert_equal false, rule.send(:check_instance, rule)
-
-      assert_raises TypeError do
-        rule.send(:check_instance, 'a string object')
-      end
-    end
     
     test 'creates deliveries ONCE for objects matching class rule' do
-      rule = create(:rule, klass_name: 'Rooler::Rule', klass_finder_method: 'to_a')
-      
+      Foo.create
+      rule = create(:rule, klass_name: 'Foo', klass_finder_method: 'active_record_finder')
       
       assert_difference 'Delivery.count' do
         rule.process
@@ -51,22 +61,28 @@ module Rooler
       end
     end
     
-    test 'creates deliveries ONCE for specific object if instance method returns true' do
-      true_rule = create(:rule, klass_name: 'Rooler::Rule', instance_checker_method: 'present?')
+    test 'finds delivered objects where the condition no longer applies and resets them' do
+      foo = Foo.create(active: true)
+      rule = create(:rule, klass_name: 'Foo', klass_finder_method: 'active_finder')
+      rule.process
+      
+      assert rule.send(:find_undelivered_by_klass).empty?
+      assert_no_difference 'Delivery.count' do
+         rule.process
+       end
+      
+      foo.update_attributes(active: false)
+      
+      assert_difference 'Delivery.count', -1 do
+        rule.clear_non_applicable_deliveries
+      end
+      
+      foo.update_attributes(active: true)
       
       assert_difference 'Delivery.count' do
-        true_rule.process(true_rule)
-      end
+        rule.process
+      end      
       
-      assert_no_difference 'Delivery.count' do
-        true_rule.process(true_rule)
-      end
-      
-      false_rule = create(:rule, klass_name: 'Rooler::Rule', instance_checker_method: 'nil?')
-      
-      assert_no_difference 'Delivery.count' do
-        false_rule.process(false_rule)
-      end
     end
     
   end
