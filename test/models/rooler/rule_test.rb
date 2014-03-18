@@ -85,5 +85,14 @@ module Rooler
       
     end
     
+    test "won't let you create a rule with an invalid class or method name" do
+      assert_raises ActiveRecord::RecordInvalid do
+        create(:rule, klass_name: 'Invalid', klass_finder_method: 'active_finder')
+      end
+      assert_raises ActiveRecord::RecordInvalid do
+        create(:rule, klass_name: 'Foo', klass_finder_method: 'invalid')
+      end
+    end
+    
   end
 end

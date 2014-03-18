@@ -9,8 +9,6 @@
       <th>Subject</th>
       <th>Body</th>
       <th></th>
-      <th></th>
-      <th></th>
     </tr>
   </thead>
 
@@ -21,10 +19,11 @@
         <td><%= template.to %></td>
         <td><%= template.cc %></td>
         <td><%= template.subject %></td>
-        <td><%= template.body %></td>
-        <td><%= link_to 'Show', template %></td>
-        <td><%= link_to 'Edit', edit_template_path(template) %></td>
-        <td><%= link_to 'Destroy', template, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= truncate(strip_tags(template.body)) %></td>
+        <td>
+            <%= link_to 'Show', template %> | 
+            <%= link_to 'Edit', edit_template_path(template) %> | 
+            <%= link_to 'Destroy', template, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>

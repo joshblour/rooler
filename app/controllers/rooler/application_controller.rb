@@ -1,4 +1,5 @@
 module Rooler
-  class ApplicationController < ActionController::Base
+  class ApplicationController <  Rooler::BaseController
+
   end
 end

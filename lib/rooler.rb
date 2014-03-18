@@ -5,6 +5,7 @@ require 'ckeditor'
 require 'simple_form'
 
 module Rooler
+  BaseController ||= ActionController::Base
   
   def self.process_scheduled_rules
     Rule.ready_to_be_checked.each(&:process)

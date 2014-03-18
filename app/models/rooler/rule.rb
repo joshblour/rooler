@@ -12,6 +12,9 @@ module Rooler
     scope :ready_to_be_checked, -> {where("last_checked_at IS NULL OR check_frequency IS NULL OR (last_checked_at + check_frequency*'1 second'::interval) < now()")}    
     serialize :method_params
     
+    validate :valid_klass_name
+    validate :valid_klass_finder_method
+    
     # processes this rule. Check entire class using class method. For each positive result add object to delivery queue.
     def process
       self.send(:find_undelivered_by_klass).each {|result| add_delivery_to_queue(result)}
@@ -71,10 +74,20 @@ module Rooler
     end
 
     def klass
-      @klass ||= self.klass_name.try(:constantize)
-      raise RuntimeError, "Couldn't constantize class name" unless @klass
-      return @klass
+      @klass ||= self.klass_name.try(:constantize) rescue nil
     end
-      
+    
+    def valid_klass_name
+      unless klass
+        errors.add(:klass_name, "Couldn't constantize class name")
+      end
+    end
+    
+    def valid_klass_finder_method
+      unless klass.respond_to? self.klass_finder_method
+        errors.add(:klass_finder_method, "Class finder method doesn't exist")
+      end
+    end
+        
   end
 end
