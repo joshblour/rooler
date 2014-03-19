@@ -17,8 +17,9 @@ module Rooler
     
     # processes this rule. Check entire class using class method. For each positive result add object to delivery queue.
     def process
-      self.send(:find_undelivered_by_klass).each {|result| add_delivery_to_queue(result)}
+      results = find_undelivered_by_klass.each {|result| add_delivery_to_queue(result)}
       self.update_column(:last_checked_at, Time.now)
+      return results
     end
 
     def clear_non_applicable_deliveries
@@ -70,7 +71,11 @@ module Rooler
         
     # create record in deliveries table for found objects (unless one already exists)
     def add_delivery_to_queue(object)
-      deliveries.create(deliverable: object)
+      if deliveries.create(deliverable: object)
+        return object
+      else
+        return nil
+      end
     end
 
     def klass

@@ -26,6 +26,7 @@
         <td><%= rule.last_checked_at %></td>
         <td><%= rule.method_params %></td>
         <td>
+          <%= link_to 'Check now', check_rule_path(rule), method: :post %>
           <%= link_to 'Edit', edit_rule_path(rule) %>
           <%= link_to 'Destroy', rule, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>

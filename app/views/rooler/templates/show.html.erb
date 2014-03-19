@@ -1,3 +1,26 @@
-<h3>Preview of <%= @template.name%> </h3>
-<%= link_to 'Back', templates_path %>
-<%= liquidize @template.body, 'template' => @template %>
+<h3>
+  Preview of <%= @template.name%>
+  <span style="float: right">
+    <%= form_tag :test_template do %>
+      <%= text_field_tag :email, nil, placeholder: 'email' %>
+      <%= submit_tag 'Send test' %>
+    <% end %>
+  </span>
+</h3>
+
+<%= link_to 'Back', templates_path %> |
+<%= link_to 'Edit', edit_template_path(@template) %> | 
+<%= link_to 'Destroy', @template, method: :delete, data: { confirm: 'Are you sure?' } %>
+
+<hr/>
+
+<b>Name: </b><%= @template.name %><br/>
+<b>To: </b><%= liquidize @template.to, @liquid_variables %><br/>
+<b>Cc: </b><%= liquidize @template.cc, @liquid_variables %><br/>
+<b>Subject: </b><%= liquidize @template.subject, @liquid_variables %><br/>
+<hr/>
+<b>Body: </b>
+  <span class='reset-this'>
+    <%= liquidize @template.body, @liquid_variables %>
+  </span>
+<hr/>

@@ -2,8 +2,20 @@ require_dependency "rooler/application_controller"
 
 module Rooler
   class RulesController < ApplicationController
-    before_action :set_rule, only: [:show, :edit, :update, :destroy]
-
+    include ActionView::Helpers::TextHelper
+    
+    before_action :set_rule, only: [:check, :show, :edit, :update, :destroy]
+    
+    # POST /rules/1
+    def check
+      results = @rule.process
+      if results
+        redirect_to rules_path, notice: "Checked rule. #{pluralize(results.count, 'result')} found"
+      else
+        redirect_to rules_path, alert: 'Failed to check rule'
+      end
+    end
+    
     # GET /rules
     def index
       @rules = Rule.all

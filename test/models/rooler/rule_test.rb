@@ -36,8 +36,10 @@ module Rooler
       foo1 = Foo.create
       rule1 = create(:rule, klass_name: 'Foo', klass_finder_method: 'active_record_finder')
       rule2 = create(:rule, klass_name: 'Foo', klass_finder_method: 'array_finder')
-      rule1.process
-      rule2.process
+      
+      
+      assert_equal [foo1], rule1.process
+      assert_equal [foo1], rule2.process
       
       foo2 = Foo.create
       

@@ -3,5 +3,13 @@ module Rooler
     has_many :rules
     has_many :deliveries, as: :deliverable
     validates :name, :to, :subject, :body, presence: true
+    
+    def test_object
+      rules.map do |rule|
+        object = rule.send(:find_by_klass).first
+        break if object
+      end
+      object ||= nil
+    end
   end
 end

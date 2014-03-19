@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.add_dependency "rails", "~> 4.0.1"
   s.add_dependency "liquid", "~> 2.6.1"
   s.add_dependency "ckeditor", "~> 4.0.10"
-  s.add_dependency 'simple_form'
+  s.add_dependency 'simple_form', "~> 3.0.1"
 
   s.add_development_dependency "pg"
   s.add_development_dependency 'factory_girl_rails'
