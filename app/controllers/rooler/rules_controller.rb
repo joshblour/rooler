@@ -18,7 +18,7 @@ module Rooler
     
     # GET /rules
     def index
-      @rules = Rule.all
+      @rules = Rule.order(:created_at)
     end
 
     # GET /rules/1

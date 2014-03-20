@@ -5,7 +5,8 @@ module Rooler
     validates :name, :to, :subject, :body, presence: true
     
     def test_object
-      rules.map do |rule|
+      object = nil
+      rules.each do |rule|
         object = rule.send(:find_by_klass).first
         break if object
       end

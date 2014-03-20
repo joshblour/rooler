@@ -11,14 +11,14 @@ module Rooler
       if delivery
         redirect_to @template, notice: "Test email sent"
       else
-        alert = test_object ? "Failed. Couldn't deliver email" : "Failed. Searched the rules associated with this template but couldn't find any objects to test with."
-        redirect_to @template, alert: alert
+        notice = test_object ? "Failed. Couldn't deliver email" : "Failed. Searched the rules associated with this template but couldn't find any objects to test with."
+        redirect_to @template, notice: notice
       end
     end
 
     # GET /templates
     def index
-      @templates = Template.all
+      @templates = Template.order(:created_at)
     end
 
     # GET /templates/1
@@ -27,7 +27,7 @@ module Rooler
       if test_object
         @liquid_variables = {test_object.class.name.demodulize.downcase.to_s => test_object}
       else
-        flash.now[:notice] = "Variables may be empty. Searched the rules associated with this template but couldn't find any objects to test with."
+        flash.now[:notice] ||= "Variables may be empty. Searched the rules associated with this template but couldn't find any objects to test with."
       end
     end
 
