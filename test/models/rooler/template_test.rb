@@ -9,7 +9,6 @@ module Rooler
       
       foo1 = Foo.create
       foo2 = Foo.create
-      # puts rule.template.reload.test_object
       assert_equal foo1, rule.template.test_object
     end
   end

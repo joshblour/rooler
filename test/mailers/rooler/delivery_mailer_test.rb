@@ -17,7 +17,6 @@ module Rooler
       rule = create(:rule, name: 'test_name', template: template)
       
       delivery = create(:delivery, rule: rule, deliverable: rule)
-      
       email = DeliveryMailer.send_mail(delivery).deliver
 
       assert !ActionMailer::Base.deliveries.empty?
