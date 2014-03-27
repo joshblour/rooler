@@ -1,3 +1,5 @@
+require 'rubytree'
+
 module Rooler
   class Template < ActiveRecord::Base
     has_many :rules
@@ -12,5 +14,11 @@ module Rooler
       end
       object ||= nil
     end
+    
+    
+    def liquid_method_tree
+      LiquidInspector.new(test_object.class).tree
+    end
+    
   end
 end

@@ -1,4 +1,8 @@
 class Foo < ActiveRecord::Base
+  has_many :bars
+  
+  liquid_methods :active, :created_at, :bars
+  
   
   def self.active_record_finder
     self.where(true)

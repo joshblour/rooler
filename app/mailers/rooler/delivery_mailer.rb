@@ -2,6 +2,8 @@ module Rooler
   class DeliveryMailer < ActionMailer::Base
     helper ApplicationHelper
     include ApplicationHelper
+    
+    default :from => 'default@myapp.com'
         
     def send_mail(delivery, to_email = nil)
        template = delivery.template
