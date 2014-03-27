@@ -27,7 +27,7 @@ module Rooler
     end
     
     def associations(klass)
-      klass.reflect_on_all_associations.map(&:name)
+      klass.reflect_on_all_associations.map(&:class_name)
     end
     
     def liquid_methods(klass)
