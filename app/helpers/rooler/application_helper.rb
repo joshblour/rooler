@@ -5,11 +5,12 @@ module Rooler
       Liquid::Template.parse(content).render(arguments, :filters => [Rooler::LiquidFilters]).html_safe
     end
     
-    def print_tree(tree)
-      content_tag :ul do
-        content_tag :li, tree.name
-        tree.children { |child| print_tree(child) if child } # Child might be 'nil'
-      end
+    def render_tree(tree)
+      res = "<ul>"
+      res << "<li>#{tree.name}"
+      tree.children.each {|child| res << render_tree(child)}
+      res << "</li></ul>"
+      res
     end
      
   end

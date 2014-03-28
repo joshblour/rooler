@@ -3,6 +3,7 @@ require 'rooler/liquid_filters'
 require 'liquid'
 require 'ckeditor'
 require 'simple_form'
+require 'rubytree'
 
 module Rooler
   BaseController ||= ActionController::Base

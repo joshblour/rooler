@@ -1,5 +1,3 @@
-require 'rubytree'
-
 module Rooler
   class LiquidInspector
     
@@ -38,7 +36,9 @@ module Rooler
     
     
     def liquid_methods(klass)
-      klass::LiquidDropClass.public_instance_methods.map(&:to_sym) - Liquid::Drop.public_instance_methods.map(&:to_sym)
+      if klass.const_defined?(LiquidDropClass)
+        return klass::LiquidDropClass.public_instance_methods.map(&:to_sym) - ::Liquid::Drop.public_instance_methods.map(&:to_sym)
+      end
     end
     
   end

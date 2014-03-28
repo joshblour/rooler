@@ -2,6 +2,9 @@ require_dependency "rooler/application_controller"
 
 module Rooler
   class TemplatesController < ApplicationController
+    helper ApplicationHelper
+    include ApplicationHelper
+    
     before_action :set_template, only: [:test, :show, :edit, :update, :destroy]
 
     def test

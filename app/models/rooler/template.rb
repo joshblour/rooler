@@ -1,5 +1,3 @@
-require 'rubytree'
-
 module Rooler
   class Template < ActiveRecord::Base
     has_many :rules
