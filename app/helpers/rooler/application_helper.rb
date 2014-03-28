@@ -12,6 +12,13 @@ module Rooler
       res << "</li></ul>"
       res
     end
+    
+    def liquid_filters
+      Rooler::LiquidFilters.instance_methods.inject({}) do |result, element|
+        result[element] = Rooler::LiquidFilters.instance_method(element).parameters.map(&:last)
+        result
+      end
+    end
      
   end
 end

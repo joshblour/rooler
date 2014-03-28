@@ -7,4 +7,8 @@
     <%= f.button :submit %>
 <% end %>
 
+<h3>Liquid Methods</h3>
 <%= render_tree(@template.liquid_method_tree).html_safe %>
+
+<h4>Helper Methods</h4>
+<%= Rooler::LiquidFilters.instance_methods.to_sentence %>
