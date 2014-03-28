@@ -18,7 +18,9 @@ module Rooler
       klass = klass_name.to_s.classify.constantize
       add_nodes_to_tree(tree, liquid_methods(klass))
       associations(klass).each do |association|
-        add_liquid_methods_as_nodes(tree[association.name.to_sym], association.class_name)
+        unless tree.parentage && tree.parentage.map(&:name).include?(association.name.to_s)
+          add_liquid_methods_as_nodes(tree[association.name.to_sym], association.class_name) 
+        end
       end
       return tree
     end
