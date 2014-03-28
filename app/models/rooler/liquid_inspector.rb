@@ -38,6 +38,8 @@ module Rooler
     def liquid_methods(klass)
       if klass.const_defined?('LiquidDropClass')
         return klass::LiquidDropClass.public_instance_methods.map(&:to_sym) - ::Liquid::Drop.public_instance_methods.map(&:to_sym)
+      else
+        return []
       end
     end
     
