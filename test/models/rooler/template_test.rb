@@ -24,9 +24,9 @@ module Rooler
       tree["bars"] << ::Tree::TreeNode.new("test")
       tree["bars"] << ::Tree::TreeNode.new("raboof")
       tree["bars"]["raboof"] << ::Tree::TreeNode.new('test')
-      tree["bars"]["raboof"] << ::Tree::TreeNode.new('created_at')
+      tree["bars"]["raboof"] << ::Tree::TreeNode.new('updated_at')
       
-      assert_equal tree, rule.template.liquid_method_tree
+      assert_equal tree.to_json, rule.template.liquid_method_tree.to_json
     end
   end
 end
