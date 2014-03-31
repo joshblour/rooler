@@ -15,7 +15,8 @@ module Rooler
     
     
     def liquid_method_tree
-      LiquidInspector.new(test_object.class).tree
+      object = test_object
+      LiquidInspector.new(object.class).tree if object
     end
     
   end

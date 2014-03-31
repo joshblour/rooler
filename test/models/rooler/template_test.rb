@@ -29,5 +29,10 @@ module Rooler
             
       assert_equal tree.to_json, rule.template.liquid_method_tree.to_json
     end
+    
+    test 'returns nil if no test object' do
+      rule = create(:rule, klass_name: 'Foo', klass_finder_method: 'active_record_finder')
+      assert_nil rule.template.liquid_method_tree
+    end
   end
 end
