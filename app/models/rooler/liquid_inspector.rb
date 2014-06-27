@@ -2,7 +2,7 @@ module Rooler
   class LiquidInspector
     
     def initialize(klass)
-      @klass_name = klass.to_s.downcase
+      @klass_name = klass.to_s.underscore
     end
     
     def tree
@@ -15,7 +15,7 @@ module Rooler
     # Recursive method. Creates nodes any liquid methods belonging to that class. If any of those nodes
     # are also associations, it calls itself on that node. Note the different (intential use of association.name and class_name)
     def add_liquid_methods_as_nodes(tree, klass_name)
-      klass = klass_name.to_s.classify.constantize
+      klass = klass_name.to_s.camelize.constantize
       add_nodes_to_tree(tree, liquid_methods(klass))
       associations(klass).each do |association|
         unless tree.parentage && tree.parentage.map {|p| p.name.to_s.classify}.include?(association.name.to_s.classify)

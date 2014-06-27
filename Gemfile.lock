@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rooler (0.0.10)
+    rooler (0.0.12)
       ckeditor (~> 4.0, >= 4.0.10)
       liquid (~> 2.6, >= 2.6.1)
       rails (~> 4.0, >= 4.0.1)
@@ -38,7 +38,7 @@ GEM
     arel (4.0.2)
     atomic (1.1.14)
     builder (3.1.4)
-    ckeditor (4.0.10)
+    ckeditor (4.0.11)
       mime-types
       orm_adapter (~> 0.5.0)
     erubis (2.7.0)
@@ -59,7 +59,7 @@ GEM
     multi_json (1.8.4)
     orm_adapter (0.5.0)
     pg (0.17.1)
-    polyglot (0.3.4)
+    polyglot (0.3.5)
     rack (1.5.2)
     rack-test (0.6.2)
       rack (>= 1.0)
@@ -80,10 +80,10 @@ GEM
     rubytree (0.9.3)
       json (~> 1.8)
       structured_warnings (~> 0.1)
-    simple_form (3.0.1)
-      actionpack (>= 4.0.0, < 4.1)
-      activemodel (>= 4.0.0, < 4.1)
-    sprockets (2.12.0)
+    simple_form (3.0.2)
+      actionpack (~> 4.0)
+      activemodel (~> 4.0)
+    sprockets (2.12.1)
       hike (~> 1.2)
       multi_json (~> 1.0)
       rack (~> 1.0)
