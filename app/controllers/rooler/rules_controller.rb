@@ -4,22 +4,25 @@ module Rooler
   class RulesController < ApplicationController
     include ActionView::Helpers::TextHelper
     
-    before_action :set_rule, only: [:check, :show, :edit, :update, :destroy]
+    before_action :set_rule, only: [:process_now, :find_matches, :show, :edit, :update, :destroy]
     
-    # POST /rules/1
-    def process
+    # POST /rules/1/process
+    def process_now
+      already_delivered_ids = @rule.still_applicable_delivery_ids
       results = @rule.process
       if results
-        redirect_to rules_path, notice: "Success. #{pluralize(results.count, 'result')} processed"
+        redirect_to rules_path, notice: "Success. #{pluralize(results.count, 'new result')} scheduled for delivery. #{pluralize(already_delivered_ids.count, 'result')} already delivered"
       else
         redirect_to rules_path, alert: 'Failed to process rule'
       end
     end
     
+    # POST /rules/1/find_matches
     def find_matches
-      results = @rule.find_by_klass
+      already_delivered_ids = @rule.still_applicable_delivery_ids
+      results = @rule.find_by_klass_ids
       if results
-        redirect_to rules_path, notice: "Success. #{pluralize(results.count, 'match')} found"
+        redirect_to rules_path, notice: "#{pluralize(results.count, 'result')} found. #{pluralize(already_delivered_ids.count, 'result')} already delivered"
       else
         redirect_to rules_path, alert: 'Failed to check rule'
       end

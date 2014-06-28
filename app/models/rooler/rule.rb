@@ -26,16 +26,16 @@ module Rooler
       self.deliveries.where(deliverable_id: no_longer_applicable_delivery_ids).destroy_all
     end
     
-    # sends klass_method to klass. If the saved rule contains any params, send those as well.
-    def find_by_klass
-      if self.method_params
-        klass.send(self.klass_finder_method, self.method_params)
-      else
-        klass.send(self.klass_finder_method)
-      end
-    end
+    # delivery ids that no longer match the rule
 
-    private 
+    def no_longer_applicable_delivery_ids
+      already_delivered_ids - find_by_klass_ids
+    end
+    
+    # delivery ids that still match the rule
+    def still_applicable_delivery_ids
+      already_delivered_ids & find_by_klass_ids
+    end
     
     def find_by_klass_ids
       results = find_by_klass
@@ -45,6 +45,20 @@ module Rooler
         results.map(&:id)
       else
         raise "Cannot determine object ids"
+      end
+    end
+        
+
+    private 
+    
+
+    
+    # sends klass_method to klass. If the saved rule contains any params, send those as well.
+    def find_by_klass
+      if self.method_params
+        klass.send(self.klass_finder_method, self.method_params)
+      else
+        klass.send(self.klass_finder_method)
       end
     end
     
@@ -65,10 +79,6 @@ module Rooler
       self.deliveries.pluck(:deliverable_id)  #just getting the deliverable id lets the finder class and the result class be different
     end
     
-    def no_longer_applicable_delivery_ids
-      already_delivered_ids - find_by_klass_ids
-    end
-        
     # create record in deliveries table for found objects (unless one already exists)
     def add_delivery_to_queue(object)
       if deliveries.create(deliverable: object)
