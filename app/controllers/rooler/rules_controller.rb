@@ -7,10 +7,19 @@ module Rooler
     before_action :set_rule, only: [:check, :show, :edit, :update, :destroy]
     
     # POST /rules/1
-    def check
+    def process
       results = @rule.process
       if results
-        redirect_to rules_path, notice: "Checked rule. #{pluralize(results.count, 'result')} found"
+        redirect_to rules_path, notice: "Success. #{pluralize(results.count, 'result')} processed"
+      else
+        redirect_to rules_path, alert: 'Failed to process rule'
+      end
+    end
+    
+    def find_matches
+      results = @rule.find_by_klass
+      if results
+        redirect_to rules_path, notice: "Success. #{pluralize(results.count, 'match')} found"
       else
         redirect_to rules_path, alert: 'Failed to check rule'
       end

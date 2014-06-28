@@ -4,7 +4,8 @@ Rooler::Engine.routes.draw do
   end
   
   resources :rules do
-    post 'check', on: :member
+    post 'process', on: :member
+    post 'find_matches', on: :member
   end
 
 end

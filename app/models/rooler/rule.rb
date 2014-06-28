@@ -26,8 +26,6 @@ module Rooler
       self.deliveries.where(deliverable_id: no_longer_applicable_delivery_ids).destroy_all
     end
     
-    private 
-    
     # sends klass_method to klass. If the saved rule contains any params, send those as well.
     def find_by_klass
       if self.method_params
@@ -36,6 +34,8 @@ module Rooler
         klass.send(self.klass_finder_method)
       end
     end
+
+    private 
     
     def find_by_klass_ids
       results = find_by_klass
@@ -57,7 +57,7 @@ module Rooler
       elsif results.respond_to?(:reject)
         results.reject {|o| already_delivered_ids.include?(o.id)}
       else
-        raise "cannot determine which objects where already delivered"
+        raise "cannot determine which objects were already delivered"
       end
     end
     

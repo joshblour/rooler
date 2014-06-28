@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.homepage    = "http://www.github.com/joshblour"
   s.summary     = "mailer triggered by klass rules"
   s.description = "send emails based on results of a class method"
+  s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]

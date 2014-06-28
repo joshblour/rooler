@@ -6,7 +6,7 @@ module Rooler
     end
     
     def tree
-      tree = ::Tree::TreeNode.new(@klass_name)
+      tree = ::Tree::TreeNode.new(@klass_name.camelize.demodulize.underscore)
       add_liquid_methods_as_nodes(tree, @klass_name)
     end
 
