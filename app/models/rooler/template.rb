@@ -7,7 +7,7 @@ module Rooler
     def test_object
       object = nil
       rules.each do |rule|
-        object = rule.send(:find_by_klass).first
+        object = rule.send(:find_by_klass).last
         break if object
       end
       object ||= nil
