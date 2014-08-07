@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.test_files = Dir["test/**/*"]
 
   s.add_runtime_dependency 'rails', '~> 4.0', '>= 4.0.1'
-  s.add_runtime_dependency 'liquid', '~> 2.6', '>= 2.6.1'
+  s.add_runtime_dependency 'liquid'
   s.add_runtime_dependency 'ckeditor', '~> 4.0', '>= 4.0.10'
   s.add_runtime_dependency 'simple_form', '~> 3.0', '>= 3.0.1'
   s.add_runtime_dependency 'rubytree', '~> 0.9', '>= 0.9.3'
