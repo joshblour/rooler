@@ -1,7 +1,7 @@
 module Rooler
   class DeliveryMailer < ActionMailer::Base
-    helper Rooler::ApplicationHelper
-    include Roller::ApplicationHelper
+    helper ::Rooler::ApplicationHelper
+    include ::Roller::ApplicationHelper
     
     default :from => 'default@myapp.com'
         
