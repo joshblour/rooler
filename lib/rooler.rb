@@ -5,8 +5,12 @@ require 'ckeditor'
 require 'simple_form'
 require 'rubytree'
 
-module Rooler
-  BaseController ||= ActionController::Base
+module Rooler  
+  mattr_accessor :from_email, :base_controller
+  
+  self.from_email ||= 'default@myapp.com'
+  self.base_controller ||= 'ActionController::Base'
+    
   
   def self.process_scheduled_rules
     Rule.ready_to_be_checked.each do |rule|

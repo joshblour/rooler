@@ -3,7 +3,7 @@ module Rooler
     helper ::Rooler::ApplicationHelper
     include ::Rooler::ApplicationHelper
     
-    default :from => 'default@myapp.com'
+    default :from => Rooler.from_email
         
     def send_mail(delivery, to_email = nil)
        template = delivery.template
